@@ -1,0 +1,16 @@
+<rss version="2.0">
+  <channel>
+    <title>Title goes here</title>
+    <link>Link goes here</link>
+    <description>Description goes here</description>
+    <item>
+      <title>Optional title goes here</title>
+      <description>Optional description goes here</description>
+      <link>Optional link goes here</link>
+      <pubDate>Optional publication date goes here</pubDate>
+      <source url="the source URL">Optional source goes here</source>
+      ...
+    </item>
+    ...
+  </channel>
+</rss>
