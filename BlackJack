@@ -1,0 +1,280 @@
+clear
+clc
+Cards = ["Ace Of Spades", "Ace Of Hearts",...   %The Deck of Cards
+    "Ace Of Clubs", "Ace Of Diamonds",...
+    "Two Of Spades", "Two Of Hearts",...
+    "Two Of Clubs", "Two Of Diamonds",...
+    "Three Of Spades", "Three Of Hearts",...
+    "Three Of Clubs", "Three Of Diamonds",...
+    "Four Of Spades", "Four Of Hearts",...
+    "Four Of Clubs", "Four Of Diamonds",...
+    "Five Of Spades", "Five Of Hearts",...
+    "Five Of Clubs", "Five Of Diamonds",...
+    "Six Of Spades", "Six Of Hearts",...
+    "Six Of Clubs", "Six Of Diamonds",...
+    "Seven Of Spades", "Seven Of Hearts",...
+    "Seven Of Clubs", "Seven Of Diamonds",...
+    "Eight Of Spades", "Eight Of Hearts",...
+    "Eight Of Clubs", "Eight Of Diamonds",...
+    "Nine Of Spades", "Nine Of Hearts",...
+    "Nine Of Clubs", "Nine Of Diamonds",...
+    "Ten Of Spades", "Ten Of Hearts",...
+    "Ten Of Clubs", "Ten Of Diamonds",...
+    "Jack Of Spades", "Jack Of Hearts",...
+    "Jack Of Clubs", "Jack Of Diamonds",...
+    "Queen Of Spades", "Queen Of Hearts",...
+    "Queen Of Clubs", "Queen Of Diamonds",...
+    "King Of Spades", "King Of Hearts",...
+    "King Of Clubs", "King Of Diamonds"];
+
+CardValue = [11, 11, 11, 11,... %For each card they have corresponding values
+    2, 2, 2, 2,...
+    3, 3, 3, 3,...
+    4, 4, 4, 4,...
+    5, 5, 5, 5,...
+    6, 6, 6, 6,...
+    7, 7, 7, 7,...
+    8, 8, 8, 8,...
+    9, 9, 9, 9,...
+    10, 10, 10, 10,...
+    10, 10, 10, 10,...
+    10, 10, 10, 10,...
+    10, 10, 10, 10];
+
+length1 = length(Cards); %Tells how long the deck is
+
+Num = []; %Creates the player element array
+Values = []; %Creates the player card value array
+
+Num(1) = randi(length1); %Player 1's first card in element form
+
+Card(1) = Cards(Num(1)); %Player 1's Card name
+Cards(Num(1)) = []; %Removes card from deck
+Values(1) = CardValue(Num(1)); %Says what the value of the card is from the element
+CardValue(Num(1)) = []; %Removes card value from corresponding deck values
+
+length1 = length(Cards); %Tells how long the deck is
+
+Num(2) = randi(length1); %Player 1's second Card in element form
+
+Card(2) = Cards(Num(2)); %Player 1's Card name
+Cards(Num(2)) = []; %Removes card from deck
+Values(2) = CardValue(Num(2)); %Says what the value of the card is from the element
+CardValue(Num(2)) = []; %Removes card value from corresponding deck values
+
+length1 = length(Cards); %Tells how long the deck is
+
+DNum = []; %Creates the Dealer element array
+DValues = []; %Creates the Dealer card value array
+
+DNum(1) = randi(length1); %Dealer first card
+
+DCard(1) = Cards(DNum(1)); %Dealers Card name
+Cards(DNum(1)) = []; %Removes card from deck
+DValues(1) = CardValue(DNum(1)); %Says what the value of the card is from the element
+CardValue(DNum(1)) = []; %Removes card value from corresponding deck values
+
+length1 = length(Cards); %Tells how long the deck is 
+
+DNum(2) = randi(length1); %Dealer second card
+
+DCard(2) = Cards(DNum(2)); %Dealers Card name
+Cards(DNum(2)) = []; %Removes card from deck
+DValues(2) = CardValue(DNum(2)); %Says what the value of the card is from the element
+CardValue(DNum(2)) = []; %Removes card value from corresponding deck values
+
+message1 = sprintf('Your hand is %s and %s', Card(1), Card(2)); %Creates a message of what player hand is
+message2 = sprintf('The dealer''s hand is %s and one face down card', DCard(1)); %Creates a message of what dealer hand is
+
+Player1_Value = Values(1) + Values(2); %Calculates players total card values
+
+Dealer_Value = DValues(1) + DValues(2); %Calculates dealers total card values
+
+uiwait(msgbox({message1; []; message2}, 'Hand')) %Sends a msgbox of msg1 and msg2
+
+%When player 1 gets black jack on first hand
+if Player1_Value == 21 && Dealer_Value ~= 21 
+    message3 = sprintf('You Win!'); %Creates msg3 
+    [Win, fs] = audioread('Win1.mp3'); %Reads the Win1.mp3
+    sound(Win, fs); %Plays the Win1.mp3
+    uiwait(msgbox(message3, 'Results')) %Displays msgbox of msg3
+    message6=sprintf("\n- %s\n", DCard); %Creates msg6
+    message7=sprintf("\n- %s\n", Card); %Creates msg7
+    uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %Shows what dealer and player got in msgbox
+
+    return
+end
+
+fprintf("(Remember your cards are the %s and the %s) \n", Card(1), Card(2)) %Reminds player what cards they have
+Move = input("Would you like to hit or stand? Type 1 for hit and 2 for stand: "); %Asks player if they want to hit or stand using input
+
+length1 = length(Cards); %Tells how long the deck is
+
+%Next Turn
+
+i=3; %Sets i to 3 because its the third card
+while Move ~= 2 %Loops untill move is not 2
+    if Move == 1 && Player1_Value < 21 %Functions when move is 1 and Player1_Value is less than 21
+        Num(i) = randi(length1); %Finds a random element
+        Card(i) = Cards(Num(i)); %Turns the element into a card
+        Cards(Num(i)) = []; %Removes the card from the deck
+        length1 = length(Cards); %Finds the length of the deck
+        Values(i) = CardValue(Num(i)); %Adds card to value array
+        CardValue(Num(i)) = []; %Removes cardvalue from cardvalue array
+        Player1_Value = Player1_Value + Values(i); %Calculates total player value
+        fprintf("You drew a %s \n", Card(i)) %Tells player what they drew
+        cardmsg=sprintf("\n-  %s\n", Card); %Creates cardmsg text
+        uiwait(msgbox({"You now have ";cardmsg;}, 'Player Cards')); %Creates msgbox that tells your cards
+        if Player1_Value > 21 %Functions when player value is greater than 21
+            for j = 1:length(Card) %Loops 1 to length of card array
+                if Values(j) == 11 %Functions when there is a 11 in the value array (11 is an Ace)
+                    Values(j) = 1; %Replaces the 11 to a 1
+                    Player1_Value = Player1_Value - 10; %Removes 10 from the total player value
+                    if Player1_Value < 21 %Functions when Player1_Value is less than 21
+                        break %Gets out of the loop
+                    end
+                end
+            end
+            if Player1_Value < 21 %Functions when Player1_Value is less than 21
+                Move = input("Would you like to hit or stand? Type 1 for hit and 2 for stand: "); %Asks player if they want to hit or stand in a input
+                i = i + 1; %Adds 1 to i
+                continue %Continues in the lines
+            end
+            if Player1_Value == 21 %Functions when Player1_Value is 21
+                break %Gets out of the loop
+            end
+            message3 = sprintf('You went over 21... You Lost!'); %Creates msg5
+            [Lost, fs] = audioread('Lost.mp3'); %Reads lost.mp3
+            sound(Lost, fs); %Plays lost.mp3
+            uiwait(msgbox(message3, 'Results')) %Displays msgbox with msg5
+            message6=sprintf("\n- %s\n", DCard); %Creates msg6
+            message7=sprintf("\n- %s\n", Card); %Creates msg7
+            uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %Displays msgbox with dealers cards and players cards
+            return %Stops code
+        end
+        i = i + 1; %Adds 1 to i
+        if Player1_Value == 21 %Functions when Player1_Value is 21
+            break %Gets out of the loop
+        else
+            Move = input("Would you like to hit or stand? Type 1 for hit and 2 for stand: "); %Asks player if they want to hit or stand in a input
+        end
+    elseif Move ~= 1 && Move ~= 2 %Functions when Move is not 1 or 2
+        [Idiot, fs] = audioread('Idiot.mp3'); %Reads Idiot.mp3
+        sound(Idiot, fs); %Plays Idiot.mp3
+        Move = input("What are you doing? I said to put 1 for hit and 2 for stand... put a 1 or 2!: "); %Asks what player is doing because they did not hit or stand
+    end
+end
+%%
+if Dealer_Value>=17 && Dealer_Value<=21 %if loop proceeds if the dealer value is equal to or greater than 17 and under or equal to 21.
+
+    if Dealer_Value>Player1_Value %if the dealer's cards value is greater than the player's this if loop proceeds
+        message3 = sprintf('You Lost!'); %creats an sprintf statement to be displayed
+        [Lost, fs] = audioread('Lost.mp3'); %plays this audio signaling the user lost
+        sound(Lost, fs); %sound plays
+        uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+        message6=sprintf("\n- %s\n", DCard); %creates sprintf statement to display Dealers cards
+        message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+        uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+        return; %ends program
+
+    elseif Dealer_Value<Player1_Value %if the player's cards value is greater than the dealer's, then this elseif loop proceeds
+        message3 = sprintf('You Win!'); %creats an sprintf statement to be displayed
+        [Win, fs] = audioread('Win1.mp3'); %plays this audio signaling the user wins
+        sound(Win, fs); %sound plays
+        uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+        message6=sprintf("\n- %s\n", DCard);%creates sprintf statement to display Dealers cards
+        message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+        uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+        return %ends program
+
+    elseif Dealer_Value==Player1_Value %when the dealer's card values are equal to the player's cards value, this elseif loop proceeds
+        message3 = sprintf("It's a tie! No one won!"); %creates an sprintf statement to be displayed
+        [Win, fs] = audioread('Lost.mp3');%plays this audio signaling the user lost
+        sound(Win, fs);%sound plays
+        uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+        message6=sprintf("\n- %s\n", DCard);%creates sprintf statement to display Dealers cards
+        message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+        uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+        return; %ends program
+    end 
+end
+
+a=3; %a starts at 3 because the dealer already has 2 cards. So we move on to get the next card(3)
+while Dealer_Value < 17 %while the dealer cards value is still under 17, this loops irriterates until the inequality is false
+    length1 = length(Cards); %length1 is intialized to be the length of (Cards)
+    DNum(a) = randi(length1); %index a of DNum is set equal to a random value in length1
+    DCard(a) = Cards(DNum(a)); %index a if DCard is set equal to the Card at index DNum(a)
+    Cards(DNum(a)) = []; %a new vector is created using the length of DNum(a)
+    DValues(a)=CardValue(DNum(a)); %index a of DValues is equal to index DNum(a) in CardValue
+    CardValue(DNum(a))=[]; %a new vector is created using index a in DNum
+    Dealer_Value=Dealer_Value+DValues(a); %Dealer_Value is set to be equal to the original Dealer_Value value plus DValues at index a 
+    if Dealer_Value > 21 %if the dealer value is over 21, thsi if loop proceeds to check if there was an Ace
+        for j = 1:length(DCard) %every card is checked from 1 to length of DCard
+            if DValues(j) == 11 %if DValues at index j is equal to 11, then this if statement proceeds
+                DValues(j) = 1; %DValues at index j is set to be equal to 1 now
+                Dealer_Value = Dealer_Value - 10; %Dealer_Value is set to be equal to the original Dealer_Value subtracted by 10
+                if Dealer_Value < 21 %if the Dealer's cards value is less than 21, this if loop proceeds.
+                    break %ends loop
+                end
+            end
+        end
+    end
+    if Dealer_Value>21 %if the dealer's cards value is over 21, this if loop proceeds
+        message3 = sprintf('You Win!'); %creats an sprintf statement to be displayed
+        [Win, fs] = audioread('Win1.mp3'); %plays this audio signaling the user wins
+        sound(Win, fs); %sound plays
+        uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+        message6=sprintf("\n- %s\n", DCard);%creates sprintf statement to display Dealers cards
+        message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+        uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+        return %ends program
+    end
+
+    if Dealer_Value>=17 && Dealer_Value<=21 %when the dealer's new cards value is greater than or equal to 17 and less than or equal to 21, this if loop proceeds
+        if Dealer_Value>Player1_Value %if the dealer's new cards value is greater than the player's cards value, this if loop proceeds
+            message3 = sprintf('You Lost!'); %creats an sprintf statement to be displayed
+            [Lost, fs] = audioread('Lost.mp3'); %plays this audio signaling the user lost
+            sound(Lost, fs); %sound plays
+            uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+            message6=sprintf("\n- %s\n", DCard); %creates sprintf statement to display Dealers cards
+            message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+            uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+            break; %ends loop
+
+        elseif Dealer_Value<Player1_Value %if the player's card values is greater than the dealer's cards value, then this if loop proceeds.
+            message3 = sprintf('You Win!'); %creats an sprintf statement to be displayed
+            [Win, fs] = audioread('Win1.mp3'); %plays this audio signaling the user wins
+            sound(Win, fs); %sound plays
+            uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+            message6=sprintf("\n- %s\n", DCard);%creates sprintf statement to display Dealers cards
+            message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+            uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+            break; %ends loop
+        elseif Dealer_Value==Player1_Value %if the dealer's cards value and player's cards value are equal, then this elseif loop proceeds
+            message3 = sprintf("It's a tie! No one won!"); %creates sprintf statement to be printed
+            [Win, fs] = audioread('Lost.mp3');%sound plays when there's a tie
+            sound(Win, fs);%sound plays
+            uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+            message6=sprintf("\n- %s\n", DCard);%creates sprintf statement to display Dealers cards
+            message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+            uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+            break; %ends loop
+
+        elseif Dealer_Value>21 %if the dealer's cards value is over 21, then this loop proceeds
+            message3 = sprintf('Dealer had over 21...You Win!'); %creates sprintf statement to be printed
+            [Win, fs] = audioread('Win1.mp3'); %plays sound when the player wins by default(since dealer's cards value were over 21)
+            sound(Win, fs); %sound plays
+            uiwait(msgbox(message3, 'Results')) %prints message3 with the title "results" in a message box
+            message6=sprintf("\n- %s\n", DCard);%creates sprintf statement to display Dealers cards
+            message7=sprintf("\n- %s\n", Card); %creates sprintf statement to display Player's cards
+            uiwait(msgbox({"The Dealer's Cards were: ";message6;"Your Cards were:";message7}, 'Results')) %displays message6 and message7 in a message box with the title "Results."
+
+            break; %end loop
+        end
+    end
+    a = a + 1; %increments a by +1;
+end
+
+
+
+
