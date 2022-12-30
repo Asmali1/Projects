@@ -1,0 +1,237 @@
+%Engineering 1181
+%Connect 4
+%GroupC
+%11/12/2021
+
+clear 
+clc
+
+% Initialize Game_Board to basic clear board vector
+Game_Board = [9,9,11,12,13,14,15,16,17,9,9;...
+              9,4,3,3,3,3,3,3,3,4,9;...
+              9,4,3,3,3,3,3,3,3,4,9;...
+              9,4,3,3,3,3,3,3,3,4,9;...
+              9,5,3,3,3,3,3,3,3,5,9;...
+              9,5,3,3,3,3,3,3,3,5,9;...
+              9,5,3,3,3,3,3,3,3,5,9;...
+              9,5,8,8,8,8,8,8,8,5,9;...
+              6,5,7,9,9,9,9,9,6,5,7];
+
+% Initialize Game_Board to show user message that red chip won
+Game_Board2 = [9,9,11,12,13,14,15,16,17,9,9;...
+               9,4,3,3,3,3,3,3,3,4,9;...
+               9,4,3,3,21,22,23,3,3,4,9;...
+               9,4,3,3,24,25,26,3,3,4,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,8,8,8,8,8,8,8,5,9;...
+               6,5,7,9,9,9,9,9,6,5,7];
+
+% Initialize Game_Board to show user message that black chip won
+Game_Board3 = [9,9,11,12,13,14,15,16,17,9,9;...
+               9,4,3,3,3,3,3,3,3,4,9;...
+               9,4,3,31,32,33,34,35,3,4,9;...
+               9,4,3,3,24,25,26,3,3,4,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,8,8,8,8,8,8,8,5,9;...
+               6,5,7,9,9,9,9,9,6,5,7];
+
+% Initialize Game_Board to show user message players tied
+Game_Board4 = [9,9,11,12,13,14,15,16,17,9,9;...
+               9,4,3,3,3,3,3,3,3,4,9;...
+               9,4,3,3,41,25,42,3,3,4,9;...
+               9,4,3,3,3,43,3,3,3,4,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,3,3,3,3,3,3,3,5,9;...
+               9,5,8,8,8,8,8,8,8,5,9;...
+               6,5,7,9,9,9,9,9,6,5,7];
+
+% Display clear Game_Board initially
+my_scene = simpleGameEngine('retro_blank.png', 16, 16, 10, [250, 0, 250,]); %16 * 16 is the sprite size - 10 is the zoom
+                                                                            %[204, 0, 204] is the color of the background
+% Draw Initial Scene in window
+drawScene(my_scene, Game_Board)
+
+% Assigning variables to different pieces
+red_chip = 1;
+black_chip = 2;
+
+win_state = 0; % 1 = red win 2 = black win -1 = tie
+turn = 1; % Counter for amount of turns
+
+% Print out message to user to only use allowed keys
+message1 = sprintf("Please use the 1-7 number keys to play the game.");
+%uiwait to display message box with instructions
+uiwait(msgbox(message1, 'instructions'))
+
+% While there currently is no win state (tie/black/red win)
+while (win_state == 0)
+
+    % If an even turn (able to be modded by 2)
+    if 0 == mod(turn, 2)
+
+        % Return number in vector from input using str2num to convert to
+        % int and then shift by two to fit to actual game board
+        k = str2num(getKeyboardInput(my_scene)) + 2; %#ok<ST2NM>
+
+        % Have only game board section of the display be played
+        for v = 7 : -1 : 2
+
+            % If there is an empty space available in selected column
+            if Game_Board(v, k) == 3 % 3 is empty game piece sprite
+               Game_Board(v,k) = red_chip; % Set to red chip
+               turn = turn + 1; % Increase turn (successful turn)
+               break % Leave loop
+
+            % If there isn't a space available in selected column then skip
+            % and allow user to reselect column
+            elseif Game_Board(v, k) ~= 3 && Game_Board(v, k) ~= 2 && Game_Board(v, k) ~= 1
+               break % Break current loop (while maintaining same turn
+            end
+        end     
+        drawScene(my_scene, Game_Board) % Update display of Game_Board
+        
+
+    else % If not even turn, then black chip turn
+
+        % Return number in vector from input using str2num to convert to
+        % int and then shift by two to fit to actual game board
+        k = str2num(getKeyboardInput(my_scene)) + 2; %#ok<ST2NM> 
+
+        % Have only game board section of the display be played
+        for i = 7 : -1 : 2
+            if Game_Board(i, k) == 3 % 3 is empty game piece sprite
+               Game_Board(i,k) = black_chip; % Set to black chip
+               turn = turn + 1; % Increase turn (successful turn)
+               break % Leave loop
+
+            % If there isn't a space available in selected column then skip
+            % and allow user to reselect column
+            elseif Game_Board(v, k) ~= 3 && Game_Board(v, k) ~= 2 && Game_Board(v, k) ~= 1
+               break % Leave loop
+            end
+        end
+        drawScene(my_scene, Game_Board) % Update display of Game_Board
+    end
+
+
+%% Vertical Win Search
+
+    % Search for each row
+    for row = 2 : 7
+
+        % Search each column
+        for column = 3 : 6
+
+            % Search if column of four chips are red
+            if Game_Board(row, column : column + 3) == red_chip
+                win_state = 1; % Initiate red win
+                break
+
+            % Search if column of four chips are black
+            elseif Game_Board(row, column : column + 3) == black_chip
+                win_state = 2; % Initiate black win
+                break
+            end
+            
+        end
+    end
+
+
+
+%% Horizontal Win Search
+
+    % Search for each row
+    for column = 3 : 9
+
+        % Search each column
+        for row = 2 : 4
+
+            % Search if row of four chips are red
+            if Game_Board(row : row + 3, column) == red_chip
+                win_state = 1; % Initiate red win
+                break
+
+            % Search if row of four chips are black
+            elseif Game_Board(row : row + 3, column) == black_chip
+                win_state = 2; % Initiate black win
+                break
+            end
+            
+        end
+    end
+
+
+    %% Diagonal Down Win Search
+    
+    % Search for each row
+    for column = 3 : 6
+    
+        % Search each column
+        for row = 2 : 4
+
+            % Create temporary vector to search diagonal up board
+            diagonal_down=[Game_Board(row,column),Game_Board(row+1,column+1),Game_Board(row+2,column+2),Game_Board(row+3,column+3)];
+            
+            % Search vector for all black/red chips
+            if all(diagonal_down(:) == diagonal_down(1)) && diagonal_down(1) == 1 % If all red chip
+                win_state = 1; % Initiate red win
+                break
+            elseif all(diagonal_down(:) == diagonal_down(1)) && diagonal_down(1) == 2 % If all black chip
+                win_state = 2; % Initiate black win
+                break
+            end
+            
+        end
+    end
+  
+    %% Diagonal Up Win Search
+    
+    % Search for each row
+    for column = 3 : 6
+    
+        % Search each column
+        for row = 5 : 7
+
+            % Create temporary vector to search diagonal up board
+            diagonal_up=[Game_Board(row,column),Game_Board(row-1,column+1),Game_Board(row-2,column+2),Game_Board(row-3,column+3)];
+            
+            % Search vector for all black/red chips
+            if all(diagonal_up(:) == diagonal_up(1)) && diagonal_up(1) == 1 % If all red chip
+                win_state = 1; % Initiate red chip win
+                break
+            end
+            if all(diagonal_up(:) == diagonal_up(1)) && diagonal_up(1) == 2 % If all black chip
+                win_state = 2; % Initiate black chip win
+                break
+            end
+            
+        end
+    end
+
+
+%% Tie Win Search
+
+    % Tie state when board is full
+    if turn >= 43 % If more than 43 turns (full board)
+        win_state = -1; % Initiate tie state
+        disp("Tie!") %TODO: Add Tie! display w/ sprites
+    end
+
+end
+
+% Display win state
+if win_state == 2 % Black Chip Win
+    drawScene(my_scene, Game_Board3)
+end
+if win_state == 1 % Red Chip Win
+    drawScene(my_scene, Game_Board2)
+end
+
+if win_state == -1 % Tie (Neither win)
+    drawScene(my_scene, Game_Board4)
+end
