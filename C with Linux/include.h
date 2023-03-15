@@ -1,0 +1,2 @@
+/*MOHAMED ASMALI*/
+#define INIT 1
